@@ -1,0 +1,23 @@
+
+<div class="container">
+    <div id="append"></div>
+    <div class="menu">
+        <div class="options">
+            <button id="listenpt">Listen pt</button>
+            <button id="listenen">Listen en</button>
+        </div>
+        <button id="loss">Loss</button>
+        <button id="new">Refresh</button>
+        <button id="hit">Hit</button>
+        <div>
+            <select id="select"></select>
+            <input type="checkbox" id="random" value="sequence">
+        </div>
+    </div>
+</div>
+
+<script>    
+    const words = {{#if words}}[{{#each words as |word|}}{{{word}}},{{/each}}]{{else}}[]{{/if}};
+</script>
+
+<script src="/script/main.js"></script>
