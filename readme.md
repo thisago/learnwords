@@ -17,3 +17,6 @@ It isn't the best way to do it, but I made in small amount of time.
 
 - Typescript
 - SCSS
+
+## Licence
+MIT
