@@ -1,7 +1,6 @@
 import express from "express"
-import session from "cookie-session"
-import flash from "express-flash"
-import exphbs from "express-handlebars"
+// import flash from "express-flash"
+const { engine } = require("express-handlebars")
 import fs from "fs"
 import { newAudio, cookie, addWordToList } from "./audio"
 import bodyParser from "body-parser"
@@ -35,46 +34,44 @@ const app = express()
 
 app.set(`views`, `${__dirname}/views`)
 
+
+// var hbs = engine.create({
+//   // Specify helpers which are only registered on this instance.
+//   extname: `handlebars`,
+//   defaultLayout: `main`,
+//   layoutsDir: `${__dirname}/views/layouts/`,
+// });
+
+// app.engine('handlebars', hbs.engine);
+// app.set('view engine', 'handlebars');
 app.engine(
   `handlebars`,
-  exphbs({
+  engine({
     extname: `handlebars`,
     defaultLayout: `main`,
-    partialsDir: `${__dirname}/views/partials/`,
     layoutsDir: `${__dirname}/views/layouts/`,
   })
 )
 app.set(`view engine`, `handlebars`)
 
-app.use(
-  session({
-    name: `session`,
-    secret: `d86sd87vds5vs67d5sdbf7gse432crCWR23665IN76rb`,
-    maxAge: 24 * 60 * 60 * 1000,
-  })
-)
 
-app.use(flash())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use(bodyParser.json())
 
 app.use((req, res, next) => {
-  res.locals.flash = {
-    err: req.flash(`err`),
-    suc: req.flash(`suc`),
-    inf: req.flash(`inf`),
-  }
   res.locals.words = words
-
+  
   next()
 })
 
 app.get(`/`, (req, res) => {
+  res.locals.title = "Home - Learn Words"
   res.render(`pages/index`)
 })
 
 app.get(`/new`, (req, res) => {
+  res.locals.title = "New - Learn Words"
   res.render(`pages/new`)
 })
 
@@ -90,8 +87,8 @@ const generateWords = (body: any) => (id: number) => {
   if (
     equals === true ||
     (body.type && (body.type === `letter` || body.type === `number`))
-  ) {
-    const ptPath =
+    ) {
+      const ptPath =
       newAudio(cookie)(`Brazilian Portuguese`)(body.val.toLowerCase()) || ``
     const enPath = newAudio(cookie)(`US English`)(body.val.toLowerCase()) || ``
     const setPtInfo = addWordToWordlist(words.length + id)(`en-pt`)(body.type)(
@@ -106,11 +103,11 @@ const generateWords = (body: any) => (id: number) => {
   const enPath = newAudio(cookie)(`US English`)(body.en.toLowerCase()) || ``
 
   const addWordToWordlistWithId = addWordToWordlist(id)
-  if (ptPath === `` && enPath !== ``) {
+  if (ptPath.length = 0 && enPath.length > 0) {
     addWordToWordlistWithId(`en`)(body.type)(enPath, body.en.toLowerCase())
-  } else if (enPath === `` && ptPath !== ``) {
+  } else if (enPath === `` && ptPath.length > 0) {
     addWordToWordlistWithId(`pt`)(body.type)(ptPath, body.pt.toLowerCase())
-  } else if (enPath !== `` && ptPath !== ``) {
+  } else if (enPath.length > 0 && ptPath.length > 0) {
     const setPtInfo = addWordToWordlistWithId(`en-pt`)(body.type)(
       enPath,
       body.en.toLowerCase()
@@ -122,7 +119,7 @@ const generateWords = (body: any) => (id: number) => {
 
 app.post(`/new`, (req, res) => {
   const a = generateWords(req.body)(words.length)
-  if (a.enPath !== `` || a.ptPath !== ``) {
+  if (a.enPath.length > 0 || a.ptPath.length > 0) {
     words = JSON.parse(
       fs.readFileSync(wordlistPath, {
         encoding: `utf-8`,

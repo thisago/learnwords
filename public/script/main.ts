@@ -106,7 +106,7 @@ const setupWord = (btns:any) => (select:HTMLSelectElement) => (element: HTMLElem
             playAudio((<Path>word.path).en)().finally(() =>
                 setTimeout(() =>
                     playAudio((<Path>word.path).pt)()
-                , 500),
+                , 1000),
             )
         , 500);
     };
@@ -154,7 +154,7 @@ const container = <HTMLDivElement>document.getElementById(`append`);
 
 const select = <HTMLSelectElement>document.getElementById(`select`);
 
-const israndom = <HTMLInputElement>document.getElementById(`random`);
+const isRandom = <HTMLInputElement>document.getElementById(`random`);
 
 const refresh = <HTMLButtonElement>document.getElementById(`new`);
 
@@ -166,7 +166,6 @@ const newWordFunc = () => {
     if (random === true) {
         word = randomWord(possibilities)(Math.random());
     } else {
-        console.log(`nos`);
         if (possibilities.length === word.id) {
             word = findWord(`${1}`);
         } else {
@@ -183,7 +182,7 @@ const hitChange = () => {
     console.log(hits);
 };
 
-israndom.addEventListener(`click`, (e) => {
+isRandom.addEventListener(`click`, (e) => {
     random = (<HTMLInputElement>e.target).checked === false;
 });
 
