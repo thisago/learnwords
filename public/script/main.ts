@@ -1,18 +1,18 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 
-interface pathI {
+interface Path {
     en: string,
     pt: string
 }
 
-interface wordI {
+interface Word {
     id: number,
     type: string,
     pt?: string,
     en?: string,
     val?: string,
-    path: pathI | string
+    path: Path
 }
 const extraWords = [];
 function getCookie (cname: string) {
@@ -30,19 +30,20 @@ function getCookie (cname: string) {
     }
     return `[]`;
 }
-const possibilities = <wordI[]>words.map((w:wordI, i: number) => {
+declare const words: Word[] 
+const possibilities = words.map((w:Word, i: number) => {
     w.id = i + 1;
     return w;
 });
 
 var random = true;
-var word: wordI;
+var word: Word;
 
 document.getElementsByTagName(`script`)[0].remove();
 
 var hits: number[][] = JSON.parse(getCookie(`hits`));
 
-const randomWord = (dict: wordI[]) =>
+const randomWord = (dict: Word[]) =>
     (rand: number) =>
         dict[Math.floor(rand * (dict.length))];
 
@@ -54,13 +55,13 @@ const playAudio = (path: string) => () =>
         audio.play();
     });
 
-const setupButtons = (btns: any) => (word: wordI) => {
-    btns.listen.pt.onclick = playAudio((<pathI>word.path).pt);
-    btns.listen.en.onclick = playAudio((<pathI>word.path).en);
+const setupButtons = (btns: any) => (word: Word) => {
+    btns.listen.pt.onclick = playAudio((<Path>word.path).pt);
+    btns.listen.en.onclick = playAudio((<Path>word.path).en);
 };
 
 const setupWord = (btns:any) => (select:HTMLSelectElement) => (element: HTMLElement) =>
-    (word: wordI) => {
+    (word: Word) => {
         if (!word) {
             return;
         }
@@ -102,9 +103,9 @@ const setupWord = (btns:any) => (select:HTMLSelectElement) => (element: HTMLElem
         setupButtons(btns)(word);
         select.value = `${word.id}`;
         setTimeout(() =>
-            playAudio((<pathI>word.path).en)().finally(() =>
+            playAudio((<Path>word.path).en)().finally(() =>
                 setTimeout(() =>
-                    playAudio((<pathI>word.path).pt)()
+                    playAudio((<Path>word.path).pt)()
                 , 500),
             )
         , 500);
@@ -136,7 +137,7 @@ const getWordId = (value: string) => {
 //     }
 // };
 
-const findWord = (wordId: string): wordI => {
+const findWord = (wordId: string): Word => {
     try {
         possibilities.forEach(x => {
             if (x.id === parseInt(wordId)) {
